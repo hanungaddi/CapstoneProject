@@ -77,18 +77,22 @@ def formulate(food_name,schedule):
     breakfast_values = None
     lunch_values = None
     dinner_values = None
+    snack_values = None
     for i in schedule:
         if int(i) == 1:
-            breakfast_values = AKG_left * 1.5 / 6
+            breakfast_values = AKG_left * 2 / 18
             breakfast_values = breakfast_values.tolist()
         if int(i) == 2:
-            lunch_values = AKG_left * 2.5 / 6
+            lunch_values = AKG_left * 5 / 18
             lunch_values = lunch_values.tolist()
         if int(i) == 3:
-            dinner_values = AKG_left * 2 / 6
+            dinner_values = AKG_left * 3.5 / 18
             dinner_values = dinner_values.tolist()
+        if int(i) == 4:
+            snack_values = AKG_left * 1 / 18
+            snack_values = snack_values.tolist()
     
-    return [breakfast_values, lunch_values, dinner_values]
+    return [breakfast_values, lunch_values, dinner_values, snack_values]
 
 
 def predict(data):
@@ -97,6 +101,9 @@ def predict(data):
     for index,meal in enumerate(data):
 
         if meal != None:
+            for list,i in enumerate(meal):
+                meal[list] = float("%.1f" % i)
+
             # Transform the data to pandas dataframe
             test_data = preprocessor.transform(pd.DataFrame(data=[meal], index=np.arange(len([meal])), columns=['Energi','Protein','Karbohidrat_total','Lemak_total']))
             # Predict the data
@@ -104,7 +111,7 @@ def predict(data):
             # Take 3 top data
 
             predicted = []
-            for predicted_food in test_prediction[0][:3]:
+            for predicted_food in test_prediction[0][:5]:
                 predicted.append({'nama_makanan': label_names[predicted_food], 'gizi':{'energi':dataframe.loc[predicted_food,:]['Energi'],'protein':dataframe.loc[predicted_food,:]['Protein'],'karbohidrat_total':dataframe.loc[predicted_food,:]['Karbohidrat_total'],'lemak_total':dataframe.loc[predicted_food,:]['Lemak_total']}})
 
             gizi_value = {'energi':meal[0],'protein':meal[1],'karbohidrat_total':meal[2],'lemak_total':meal[3]}
@@ -115,6 +122,8 @@ def predict(data):
                 result['lunch'] = {'gizi_needed':gizi_value, 'recommended':predicted}
             if index == 2:
                 result['dinner'] = {'gizi_needed':gizi_value, 'recommended':predicted}
+            if index == 3:
+                result['snack'] = {'gizi_needed':gizi_value, 'recommended':predicted}
     
     return result
 
