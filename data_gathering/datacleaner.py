@@ -1,11 +1,4 @@
 import csv
-import pandas as pd
-import io
-import os
-from csv import writer
-from pandas import DataFrame
-from os import path
-import json
 import re
 
 def csvopen(file):
@@ -56,7 +49,7 @@ def csvwrite(file, data, label):
 
 if __name__ == '__main__':
     data, label = csvopen('data.csv')
-    print(label)
+
     csvwrite('new_data.csv', data, label)
         
 

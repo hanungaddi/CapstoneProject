@@ -12,11 +12,9 @@ from sklearn.pipeline import Pipeline
 from sklearn import compose
 from sklearn import impute
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
-from pandas.io.json import json_normalize
-from dateutil.parser import parse
-from flask_restx import fields, Resource, Api, reqparse
+from flask_restx import Resource, Api, reqparse
 
 app = Flask(__name__)
 api = Api(app=app,
@@ -36,8 +34,8 @@ class Predict(Resource):
     def get(self):
         # Filter
         parser = reqparse.RequestParser()
-        parser.add_argument('food_name',  required=False, default=None)
-        parser.add_argument('when', required=False, default=None)
+        parser.add_argument('food_name',  required=False, default=None, location='args')
+        parser.add_argument('when', required=False, default=None, location='args')
 
         args = parser.parse_args()
         food_name = args['food_name'] or None
