@@ -1,4 +1,3 @@
-
 import pandas as pd
 import numpy as np
 
@@ -138,7 +137,7 @@ if __name__ == '__main__':
     preprocessor.fit_transform(dataframe)
 
     # Load Model
-    model = load_model('./food_recommender_model/saved_model/testing_model_2.h5')
+    model = load_model('./food_recommender_model/saved_model/testing_model_3.h5')
 
     # Run the app
     app.secret_key = 'foodpredictor2022'
