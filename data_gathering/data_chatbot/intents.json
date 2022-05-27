@@ -1,0 +1,13 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Halo", "Selamat Siang", "Selamat Pagi", "Selamat Malam"]
+    },
+    {
+      "tag": "rekomendasi",
+      "patterns": ["Tolong Rekomendasikan Makanan", 
+        "Rekomendasi Meal", "Makanan yang cocok", "Saran makanan"]
+    }
+  ]
+}

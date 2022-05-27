@@ -11,7 +11,7 @@ from sklearn.pipeline import Pipeline
 from sklearn import compose
 from sklearn import impute
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from flask_restx import Resource, Api, reqparse
 
@@ -31,12 +31,8 @@ class Predict(Resource):
     @ predict_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'food_name': {'description': 'food names', 'type': 'string', 'required': False}, 'when': {'description': 'when do you want the AI to recommend 1 (for breakfast), 2 (for lunch), 3 (for dinner). ex: 2, 3 can be 1 or more', 'type': 'string', 'required': False}})
     @ cross_origin()
     def get(self):
-        # Filter
-        parser = reqparse.RequestParser()
-        parser.add_argument('food_name',  required=False, default=None, location='args')
-        parser.add_argument('when', required=False, default=None, location='args')
-
-        args = parser.parse_args()
+        # Filter out the request arguments
+        args = request.get_json()
         food_name = args['food_name'] or None
         schedule = args['when'].split(', ') or None
 
@@ -46,7 +42,7 @@ class Predict(Resource):
         return jsonify(res)
 
 def load(database):
-    # load the database
+    # load the database into a dataframe
     datas = pd.read_csv(database, delimiter=';')
     return datas
 
