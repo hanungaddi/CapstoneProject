@@ -142,7 +142,7 @@ def food_predict(data):
 
 def chat_predict(chat_content):
     result = {}
-    label = ['greeting','rekomendasi']
+    label = ['greeting','rekomendasi', 'not_understand']
 
     token_list = tokenizer.texts_to_sequences([chat_content])[0]
 	# Pad the sequences
@@ -150,7 +150,10 @@ def chat_predict(chat_content):
 
     predicted = chatbot_model.predict(token_list, verbose=0)
     # Predict the label based on the maximum probability
-    predicted = np.argmax(predicted, axis=-1).item()
+    if max(predicted[0]) >= 0.99 and max(predicted[0]) < 1.0:
+	    predicted = np.argmax(predicted, axis=-1).item()
+    else:
+	    predicted = -1
 
     result['predicted_label'] = label[predicted]
 
