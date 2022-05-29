@@ -1,10 +1,15 @@
 import pandas as pd
 import numpy as np
+import json
 
 import autokeras as ak
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import load_model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.utils import to_categorical 
+from tensorflow.keras.preprocessing.text import Tokenizer, tokenizer_from_json
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 from sklearn import preprocessing
 from sklearn.pipeline import Pipeline
@@ -13,7 +18,7 @@ from sklearn import impute
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-from flask_restx import Resource, Api, reqparse
+from flask_restx import Resource, Api
 
 app = Flask(__name__)
 api = Api(app=app,
@@ -24,11 +29,11 @@ api = Api(app=app,
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-predict_namespace = api.namespace('food_recommender', description='a trained model that can recommend food using AKG Values (Energi, Protein, Karbohidrat_total, Lemak_total)')
+recommender_namespace = api.namespace('food_recommender', description='a trained model that can recommend food using AKG Values (Energi, Protein, Karbohidrat_total, Lemak_total)')
 
-@ predict_namespace.route('/predict', methods=['GET'])
-class Predict(Resource):
-    @ predict_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'food_name': {'description': 'food names', 'type': 'string', 'required': False}, 'when': {'description': 'when do you want the AI to recommend 1 (for breakfast), 2 (for lunch), 3 (for dinner). ex: 2, 3 can be 1 or more', 'type': 'string', 'required': False}})
+@ recommender_namespace.route('/predict', methods=['GET'])
+class Recommender(Resource):
+    @ recommender_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'food_name': {'description': 'food names', 'type': 'string', 'required': False}, 'when': {'description': 'when do you want the AI to recommend 1 (for breakfast), 2 (for lunch), 3 (for dinner). ex: 2, 3 can be 1 or more', 'type': 'string', 'required': False}})
     @ cross_origin()
     def get(self):
         # Filter out the request arguments
@@ -37,7 +42,22 @@ class Predict(Resource):
         schedule = args['when'].split(', ') or None
 
         data = formulate(food_name, schedule)
-        res = predict(data)
+        res = food_predict(data)
+
+        return jsonify(res)
+
+chatbot_namespace = api.namespace('smart_chatbot', description='a trained model for chatbot used by healthymeal app')
+
+@ chatbot_namespace.route('/predict', methods=['GET'])
+class Predict(Resource):
+    @ recommender_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'chat_content': {'description': 'chat contents', 'type': 'string', 'required': False}})
+    @ cross_origin()
+    def get(self):
+        # Filter out the request arguments
+        args = request.get_json()
+        chat_content = args['chat_content'] or None
+
+        res = chat_predict(chat_content)
 
         return jsonify(res)
 
@@ -90,7 +110,7 @@ def formulate(food_name,schedule):
     return [breakfast_values, lunch_values, dinner_values, snack_values]
 
 
-def predict(data):
+def food_predict(data):
     result = {}
 
     for index,meal in enumerate(data):
@@ -122,7 +142,24 @@ def predict(data):
     
     return result
 
+def chat_predict(chat_content):
+    result = {}
+    label = ['greeting','rekomendasi']
+
+    token_list = tokenizer.texts_to_sequences([chat_content])[0]
+	# Pad the sequences
+    token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='pre')
+
+    predicted = chatbot_model.predict(token_list, verbose=0)
+    # Predict the label based on the maximum probability
+    predicted = np.argmax(predicted, axis=-1).item()
+
+    result['predicted_label'] = label[predicted]
+
+    return result
+
 if __name__ == '__main__':
+    """ Food_Recommender """
     # Load Database (?)
     dataframe = load('E:\BANGKIT2022\CapstoneProject\data_gathering\data\cleaned_data.csv')
     dataframecopy = dataframe
@@ -135,6 +172,22 @@ if __name__ == '__main__':
     # Load Model
     model = load_model('./food_recommender_model/saved_model/testing_model_3.h5')
 
+    """ Smart_Chatbot """
+    CHATBOT_PATH = "./chatbot_model/saved_model/simple_chatbot_model/"
+
+    # Load Tokenizer
+    tokenizer_file = open(f'{CHATBOT_PATH}tokenizer.json', 'r')
+    tokenizer_data = json.load(tokenizer_file)
+    tokenizer = tokenizer_from_json(tokenizer_data)
+
+    # Load max_sequence_length
+    with open(f'{CHATBOT_PATH}max_sequence_length.txt', 'r') as file:
+        max_sequence_len = int(file.read())
+        file.close()
+    
+    # Load Model
+    chatbot_model = load_model(f'{CHATBOT_PATH}first_model.h5')
+
     # Run the app
-    app.secret_key = 'foodpredictor2022'
+    app.secret_key = 'healthymealAPI2022'
     app.run(host='127.0.0.1', port='5000', debug=True)
