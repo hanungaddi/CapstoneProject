@@ -145,7 +145,6 @@ def chat_predict(chat_content):
     label = ['greeting','rekomendasi']
 
     token_list = tokenizer.texts_to_sequences([chat_content])[0]
-    print(token_list)
 	# Pad the sequences
     token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='pre')
 
