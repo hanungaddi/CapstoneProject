@@ -6,9 +6,7 @@ import autokeras as ak
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import load_model
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.utils import to_categorical 
-from tensorflow.keras.preprocessing.text import Tokenizer, tokenizer_from_json
+from tensorflow.keras.preprocessing.text import tokenizer_from_json
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 from sklearn import preprocessing
@@ -147,6 +145,7 @@ def chat_predict(chat_content):
     label = ['greeting','rekomendasi']
 
     token_list = tokenizer.texts_to_sequences([chat_content])[0]
+    print(token_list)
 	# Pad the sequences
     token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='pre')
 
