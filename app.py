@@ -149,11 +149,13 @@ def chat_predict(chat_content):
     token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='pre')
 
     predicted = chatbot_model.predict(token_list, verbose=0)
+    print(max(predicted[0]))
     # Predict the label based on the maximum probability
-    if max(predicted[0]) >= 0.99 and max(predicted[0]) < 1.0:
-	    predicted = np.argmax(predicted, axis=-1).item()
-    else:
-	    predicted = -1
+    predicted = np.argmax(predicted, axis=-1).item()
+    # if max(predicted[0]) >= 0.90 and max(predicted[0]) < 1.0:
+	#     predicted = np.argmax(predicted, axis=-1).item()
+    # else:
+	#     predicted = -1
 
     result['predicted_label'] = label[predicted]
 
