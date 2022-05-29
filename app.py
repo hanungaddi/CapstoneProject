@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import json
+import psycopg2
 
 import autokeras as ak
 import tensorflow as tf
@@ -27,7 +28,7 @@ api = Api(app=app,
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-recommender_namespace = api.namespace('food_recommender', description='a trained model that can recommend food using AKG Values (Energi, Protein, Karbohidrat_total, Lemak_total)')
+recommender_namespace = api.namespace('food_recommender', description='a trained model that can recommend food using AKG Values (energi, protein, karbohidrat_total, lemak_total)')
 
 @ recommender_namespace.route('/predict', methods=['GET'])
 class Recommender(Resource):
@@ -59,9 +60,10 @@ class Predict(Resource):
 
         return jsonify(res)
 
-def load(database):
+def load(conn):
     # load the database into a dataframe
-    datas = pd.read_csv(database, delimiter=';')
+    datas = pd.read_sql_query("SELECT food_name, energi, protein, karbohidrat_total, lemak_total FROM PUBLIC.food", conn)
+    # datas = pd.read_csv(database, delimiter=';')
     return datas
 
 def data_preprocessing(dataframe):
@@ -79,9 +81,9 @@ def data_preprocessing(dataframe):
 
 def formulate(food_name,schedule):
     # Take values of food_name if there's any in database
-    located_data = dataframecopy.loc[dataframecopy['Food_Name'] == food_name]
-    food_values = [located_data['Energi'].values[0],located_data['Protein'].values[0],located_data['Karbohidrat_total'].values[0],located_data['Lemak_total'].values[0]]
-    # find food_name in the database else [0, 0, 0, 0] (Consist of Energi, Protein, Karbohidrat_total, Lemak_total)
+    located_data = dataframecopy.loc[dataframecopy['food_name'] == food_name.lower()]
+    food_values = [located_data['energi'].values[0],located_data['protein'].values[0],located_data['karbohidrat_total'].values[0],located_data['lemak_total'].values[0]]
+    # find food_name in the database else [0, 0, 0, 0] (Consist of energi, protein, karbohidrat_total, lemak_total)
 
     # Formulate with AKGs (for now using Male 19-29 Years Old)
     AKG = np.array([2650, 65, 430, 75])
@@ -118,14 +120,14 @@ def food_predict(data):
                 meal[list] = float("%.1f" % i)
 
             # Transform the data to pandas dataframe
-            test_data = preprocessor.transform(pd.DataFrame(data=[meal], index=np.arange(len([meal])), columns=['Energi','Protein','Karbohidrat_total','Lemak_total']))
+            test_data = preprocessor.transform(pd.DataFrame(data=[meal], index=np.arange(len([meal])), columns=['energi','protein','karbohidrat_total','lemak_total']))
             # Predict the data
             test_prediction = (-model.predict(test_data)).argsort()
             # Take 3 top data
 
             predicted = []
             for predicted_food in test_prediction[0][:5]:
-                predicted.append({'nama_makanan': label_names[predicted_food], 'gizi':{'energi':dataframe.loc[predicted_food,:]['Energi'],'protein':dataframe.loc[predicted_food,:]['Protein'],'karbohidrat_total':dataframe.loc[predicted_food,:]['Karbohidrat_total'],'lemak_total':dataframe.loc[predicted_food,:]['Lemak_total']}})
+                predicted.append({'nama_makanan': label_names[predicted_food], 'gizi':{'energi':dataframe.loc[predicted_food,:]['energi'],'protein':dataframe.loc[predicted_food,:]['protein'],'karbohidrat_total':dataframe.loc[predicted_food,:]['karbohidrat_total'],'lemak_total':dataframe.loc[predicted_food,:]['lemak_total']}})
 
             gizi_value = {'energi':meal[0],'protein':meal[1],'karbohidrat_total':meal[2],'lemak_total':meal[3]}
 
@@ -164,10 +166,17 @@ def chat_predict(chat_content):
 
 if __name__ == '__main__':
     """ Food_Recommender """
+    conn = psycopg2.connect(
+    host="localhost",
+    dbname="capstone",
+    user="postgres",
+    password="scipio")
+
     # Load Database (?)
-    dataframe = load('E:\BANGKIT2022\CapstoneProject\data_gathering\data\cleaned_data.csv')
+    dataframe = load(conn)
+    dataframe["food_name"] = dataframe["food_name"].str.lower()
     dataframecopy = dataframe
-    label_names = dataframecopy['Food_Name'].to_list()
+    label_names = dataframecopy['food_name'].to_list()
 
     # Preprocessing Data
     preprocessor = data_preprocessing(dataframe)
@@ -195,3 +204,5 @@ if __name__ == '__main__':
     # Run the app
     app.secret_key = 'healthymealAPI2022'
     app.run(host='127.0.0.1', port='5000', debug=True)
+
+    
