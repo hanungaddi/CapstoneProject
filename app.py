@@ -95,13 +95,13 @@ def formulate(food_name,schedule):
     snack_values = None
     for i in schedule:
         if int(i) == 1:
-            breakfast_values = AKG_left * 2 / 18
+            breakfast_values = AKG_left * 3 / 18
             breakfast_values = breakfast_values.tolist()
         if int(i) == 2:
-            lunch_values = AKG_left * 5 / 18
+            lunch_values = AKG_left * 6 / 18
             lunch_values = lunch_values.tolist()
         if int(i) == 3:
-            dinner_values = AKG_left * 3.5 / 18
+            dinner_values = AKG_left * 4 / 18
             dinner_values = dinner_values.tolist()
         if int(i) == 4:
             snack_values = AKG_left * 1 / 18
