@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import json
 import psycopg2
+import urllib.request
 
 import autokeras as ak
 import tensorflow as tf
@@ -60,9 +61,9 @@ class Predict(Resource):
 
         return jsonify(res)
 
-def load(conn):
+def json_to_dataframe(data):
     # load the database into a dataframe
-    datas = pd.read_sql_query("SELECT food_name, energi, protein, karbohidrat_total, lemak_total FROM PUBLIC.food", conn)
+    datas = pd.read_json(data)
     # datas = pd.read_csv(database, delimiter=';')
     return datas
 
@@ -164,16 +165,25 @@ def chat_predict(chat_content):
 
     return result
 
+def get_all_food():
+    url = "http://localhost:5001/food"
+    req = urllib.request.Request(url, method='GET')
+    req.add_header('Content-Type', 'application/json')
+    returned_data = urllib.request.urlopen(req)
+    result = returned_data.read()
+    r = result.decode('utf-8')
+
+    return r
+
 if __name__ == '__main__':
     """ Food_Recommender """
-    conn = psycopg2.connect(
-    host="localhost",
-    dbname="capstone",
-    user="postgres",
-    password="scipio")
+
+    data = get_all_food()
+    data_json = json.loads(data)
 
     # Load Database (?)
-    dataframe = load(conn)
+    dataframe = pd.json_normalize(data_json['data'])
+    dataframe.pop('id')
     dataframe["food_name"] = dataframe["food_name"].str.lower()
     dataframecopy = dataframe
     label_names = dataframecopy['food_name'].to_list()
