@@ -3,6 +3,7 @@ import numpy as np
 import json
 import psycopg2
 import urllib.request
+from waitress import serve
 
 import autokeras as ak
 import tensorflow as tf
@@ -166,7 +167,7 @@ def chat_predict(chat_content):
     return result
 
 def get_all_food():
-    url = "http://localhost:5001/food"
+    url = "http://34.101.228.44:8080/food"
     req = urllib.request.Request(url, method='GET')
     req.add_header('Content-Type', 'application/json')
     returned_data = urllib.request.urlopen(req)
@@ -193,10 +194,10 @@ if __name__ == '__main__':
     preprocessor.fit_transform(dataframe)
 
     # Load Model
-    model = load_model('./food_recommender_model/saved_model/testing_model_3.h5')
+    model = load_model('/home/c7008f0873/CapstoneProject/food_recommender_model/saved_model/testing_model_3.h5')
 
     """ Smart_Chatbot """
-    CHATBOT_PATH = "./chatbot_model/saved_model/simple_chatbot_model/"
+    CHATBOT_PATH = "/home/c7008f0873/CapstoneProject/chatbot_model/saved_model/simple_chatbot_model/"
 
     # Load Tokenizer
     tokenizer_file = open(f'{CHATBOT_PATH}tokenizer.json', 'r')
@@ -213,6 +214,7 @@ if __name__ == '__main__':
 
     # Run the app
     app.secret_key = 'healthymealAPI2022'
-    app.run(host='127.0.0.1', port='5000', debug=True)
+    serve(app, host='0.0.0.0', port=8080)
+    #app.run(host='127.0.0.1', port='5000', debug=True)
 
     
