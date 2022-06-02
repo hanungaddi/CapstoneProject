@@ -146,12 +146,12 @@ def food_predict(data):
 
 def chat_predict(chat_content):
     result = {}
-    label = ['greeting','rekomendasi', 'not_understand']
+    label = ['greeting','rekomendasi', 'random']
 
     token_list = tokenizer.texts_to_sequences([chat_content])[0]
     print(token_list)
 	# Pad the sequences
-    token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='pre')
+    token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='post')
 
     predicted = chatbot_model.predict(token_list, verbose=0)
     print(max(predicted[0]))
