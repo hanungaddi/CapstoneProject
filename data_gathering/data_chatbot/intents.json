@@ -2,15 +2,32 @@
   "intents": [
     {
       "tag": "1greeting",
-      "patterns": ["Halo", "Selamat Siang", "Selamat Pagi", "Selamat Malam", "Halo, selamat pagi","Assalamualaikum", "Hai, Selamat Pagi", "Selamat Sore", "met malam", "Selamat malem", "Hai, salamat siang", "siang", "met malem", "pagii"]
+      "patterns": ["Halo", "Selamat Siang", "Selamat Pagi", "Selamat Malam", "Halo, selamat pagi", "Assalamualaikum", "Hai, Selamat Pagi", "Selamat Sore", "met malam", "Selamat malem", "Hai, salamat siang", "siang", "met malem", "pagii"]
     },
     {
       "tag": "2rekomendasi",
-      "patterns": ["Tolong Rekomendasikan Makanan", "Rekomendasi Meal", "Makanan yang cocok", "Saran makanan", "Rekomendasiin Makanan Dong", "Hai, Aku mau dibikinin rekomendasi makanan", "Rekomendasi makan", "rekomendasi makanan", "saranin makanan", "saranin aku makanan", "kasih aku saran makanan", "saran makan cuy", "rekomendasi makan siang", "anjuran makan", "anjuran meal", "saran makan sehat"]
+      "patterns": [
+        "Tolong Rekomendasikan Makanan",
+        "Rekomendasi Meal",
+        "Makanan yang cocok",
+        "Saran makanan",
+        "Rekomendasiin Makanan Dong",
+        "Hai, Aku mau dibikinin rekomendasi makanan",
+        "Rekomendasi makan",
+        "rekomendasi makanan",
+        "saranin makanan",
+        "saranin aku makanan",
+        "kasih aku saran makanan",
+        "saran makan cuy",
+        "rekomendasi makan siang",
+        "anjuran makan",
+        "anjuran meal",
+        "saran makan sehat"
+      ]
     },
     {
       "tag": "3random",
-      "patterns": ["wkwkkwkw", "ahaahahaha", "wkwkwk ahahah wkkww", "ngga sesuai", "ashiaaap", "apa aja", "jelek", "susah", "yoi", "cuy", "hola", "waskqks"]
+      "patterns": ["wkwkkwkw", "ahaahahaha", "wkwkwk ahahah wkkww", "ngga sesuai", "ashiaaap", "apa aja", "jelek", "susah", "yoi", "cuy", "hola", "waskqks", "wkwk"]
     }
   ]
 }
