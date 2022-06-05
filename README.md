@@ -33,6 +33,7 @@
 
 ## API
 
+- Using flask as framework
 - Preprocess user data with AKG
 - Call the model to recommend 3 Best Food
 - Smart chatbot model for classifying type of chat_content
