@@ -3,7 +3,6 @@ import numpy as np
 import json
 import psycopg2
 import urllib.request
-from waitress import serve
 
 import autokeras as ak
 import tensorflow as tf
@@ -194,10 +193,10 @@ if __name__ == '__main__':
     preprocessor.fit_transform(dataframe)
 
     # Load Model
-    model = load_model('/home/c7008f0873/CapstoneProject/food_recommender_model/saved_model/testing_model_3.h5')
+    model = load_model('./food_recommender_model/saved_model/testing_model_3.h5')
 
     """ Smart_Chatbot """
-    CHATBOT_PATH = "/home/c7008f0873/CapstoneProject/chatbot_model/saved_model/simple_chatbot_model/"
+    CHATBOT_PATH = "./chatbot_model/saved_model/simple_chatbot_model/"
 
     # Load Tokenizer
     tokenizer_file = open(f'{CHATBOT_PATH}tokenizer.json', 'r')
@@ -214,7 +213,7 @@ if __name__ == '__main__':
 
     # Run the app
     app.secret_key = 'healthymealAPI2022'
-    serve(app, host='0.0.0.0', port=8080)
+    app.run(debug=True, host="0.0.0.0", port=8080)
     #app.run(host='127.0.0.1', port='5000', debug=True)
 
     
