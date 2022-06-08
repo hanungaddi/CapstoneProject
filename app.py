@@ -210,7 +210,7 @@ chatbot_model = load_model(f'{CHATBOT_PATH}first_model.h5')
 
 # Run the app
 app.secret_key = 'healthymealAPI2022'
-app.run(debug=True, host="0.0.0.0", port=5000)
+app.run(debug=True, host="0.0.0.0", port=8080)
 #app.run(host='127.0.0.1', port='5000', debug=True)
 
     
