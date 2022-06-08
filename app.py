@@ -209,8 +209,9 @@ with open(f'{CHATBOT_PATH}max_sequence_length.txt', 'r') as file:
 chatbot_model = load_model(f'{CHATBOT_PATH}first_model.h5')
 
 # Run the app
-app.secret_key = 'healthymealAPI2022'
-app.run(debug=True, host="0.0.0.0", port=8080)
+if '__main__' == __name__:
+    app.secret_key = 'healthymealAPI2022'
+    app.run(debug=True, host="0.0.0.0", port=8080)
 #app.run(host='127.0.0.1', port='5000', debug=True)
 
     
