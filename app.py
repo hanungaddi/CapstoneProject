@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import json
-import psycopg2
 import urllib.request
 
 import autokeras as ak
@@ -165,7 +164,7 @@ def chat_predict(chat_content):
     return result
 
 def get_all_food():
-    url = "http://localhost:5001/food"
+    url = "http://34.101.228.44:8080/food"
     req = urllib.request.Request(url, method='GET')
     req.add_header('Content-Type', 'application/json')
     returned_data = urllib.request.urlopen(req)
@@ -212,6 +211,7 @@ if __name__ == '__main__':
 
     # Run the app
     app.secret_key = 'healthymealAPI2022'
-    app.run(host='127.0.0.1', port='5000', debug=True)
+    app.run(debug=True, host="0.0.0.0", port=8080)
+    #app.run(host='127.0.0.1', port='5000', debug=True)
 
     
