@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import json
-import psycopg2
 import urllib.request
 
 import autokeras as ak
