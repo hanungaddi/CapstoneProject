@@ -34,7 +34,7 @@ recommender_namespace = api.namespace('food_recommender', description='a trained
 class Recommender(Resource):
     @ recommender_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'food_name': {'description': 'food names', 'type': 'string', 'required': False}, 'when': {'description': 'when do you want the AI to recommend 1 (for breakfast), 2 (for lunch), 3 (for dinner). ex: 2, 3 can be 1 or more', 'type': 'string', 'required': False}})
     @ cross_origin()
-    def get(self):
+    def post(self):
         # Filter out the request arguments
         args = request.get_json()
         food_name = args['food_name'] or None
@@ -51,7 +51,7 @@ chatbot_namespace = api.namespace('smart_chatbot', description='a trained model 
 class Predict(Resource):
     @ recommender_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'chat_content': {'description': 'chat contents', 'type': 'string', 'required': False}})
     @ cross_origin()
-    def get(self):
+    def post(self):
         # Filter out the request arguments
         args = request.get_json()
         chat_content = args['chat_content'] or None
