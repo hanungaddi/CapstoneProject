@@ -31,7 +31,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 recommender_namespace = api.namespace('food_recommender', description='a trained model that can recommend food using AKG Values (energi, protein, karbohidrat_total, lemak_total)')
 
-@ recommender_namespace.route('/predict', methods=['GET'])
+@ recommender_namespace.route('/predict', methods=['POST'])
 class Recommender(Resource):
     @ recommender_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'food_name': {'description': 'food names', 'type': 'string', 'required': False}, 'when': {'description': 'when do you want the AI to recommend 1 (for breakfast), 2 (for lunch), 3 (for dinner). ex: 2, 3 can be 1 or more', 'type': 'string', 'required': False}})
     @ cross_origin()
@@ -48,7 +48,7 @@ class Recommender(Resource):
 
 chatbot_namespace = api.namespace('smart_chatbot', description='a trained model for chatbot used by healthymeal app')
 
-@ chatbot_namespace.route('/predict', methods=['GET'])
+@ chatbot_namespace.route('/predict', methods=['POST'])
 class Predict(Resource):
     @ recommender_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, params={'chat_content': {'description': 'chat contents', 'type': 'string', 'required': False}})
     @ cross_origin()
@@ -145,15 +145,14 @@ def food_predict(data):
 
 def chat_predict(chat_content):
     result = {}
-    label = ['greeting','rekomendasi', 'not_understand']
+    label = ['greeting','rekomendasi','random']
 
     token_list = tokenizer.texts_to_sequences([chat_content])[0]
     print(token_list)
 	# Pad the sequences
-    token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='pre')
+    token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='post')
 
     predicted = chatbot_model.predict(token_list, verbose=0)
-    print(max(predicted[0]))
     # Predict the label based on the maximum probability
     predicted = np.argmax(predicted, axis=-1).item()
     # if max(predicted[0]) >= 0.90 and max(predicted[0]) < 1.0:
