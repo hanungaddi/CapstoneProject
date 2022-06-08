@@ -173,45 +173,44 @@ def get_all_food():
 
     return r
 
-if __name__ == '__main__':
-    """ Food_Recommender """
+""" Food_Recommender """
 
-    data = get_all_food()
-    data_json = json.loads(data)
+data = get_all_food()
+data_json = json.loads(data)
 
-    # Load Database (?)
-    dataframe = pd.json_normalize(data_json['data'])
-    dataframe.pop('id')
-    dataframe["food_name"] = dataframe["food_name"].str.lower()
-    dataframecopy = dataframe
-    label_names = dataframecopy['food_name'].to_list()
+# Load Database (?)
+dataframe = pd.json_normalize(data_json['data'])
+dataframe.pop('id')
+dataframe["food_name"] = dataframe["food_name"].str.lower()
+dataframecopy = dataframe
+label_names = dataframecopy['food_name'].to_list()
 
-    # Preprocessing Data
-    preprocessor = data_preprocessing(dataframe)
-    preprocessor.fit_transform(dataframe)
+# Preprocessing Data
+preprocessor = data_preprocessing(dataframe)
+preprocessor.fit_transform(dataframe)
 
-    # Load Model
-    model = load_model('./food_recommender_model/saved_model/testing_model_3.h5')
+# Load Model
+model = load_model('./food_recommender_model/saved_model/testing_model_3.h5')
 
-    """ Smart_Chatbot """
-    CHATBOT_PATH = "./chatbot_model/saved_model/simple_chatbot_model/"
+""" Smart_Chatbot """
+CHATBOT_PATH = "./chatbot_model/saved_model/simple_chatbot_model/"
 
-    # Load Tokenizer
-    tokenizer_file = open(f'{CHATBOT_PATH}tokenizer.json', 'r')
-    tokenizer_data = json.load(tokenizer_file)
-    tokenizer = tokenizer_from_json(tokenizer_data)
+# Load Tokenizer
+tokenizer_file = open(f'{CHATBOT_PATH}tokenizer.json', 'r')
+tokenizer_data = json.load(tokenizer_file)
+tokenizer = tokenizer_from_json(tokenizer_data)
 
-    # Load max_sequence_length
-    with open(f'{CHATBOT_PATH}max_sequence_length.txt', 'r') as file:
-        max_sequence_len = int(file.read())
-        file.close()
-    
-    # Load Model
-    chatbot_model = load_model(f'{CHATBOT_PATH}first_model.h5')
+# Load max_sequence_length
+with open(f'{CHATBOT_PATH}max_sequence_length.txt', 'r') as file:
+    max_sequence_len = int(file.read())
+    file.close()
 
-    # Run the app
-    app.secret_key = 'healthymealAPI2022'
-    app.run(debug=True, host="0.0.0.0", port=8080)
-    #app.run(host='127.0.0.1', port='5000', debug=True)
+# Load Model
+chatbot_model = load_model(f'{CHATBOT_PATH}first_model.h5')
+
+# Run the app
+app.secret_key = 'healthymealAPI2022'
+app.run(debug=True, host="0.0.0.0", port=5000)
+#app.run(host='127.0.0.1', port='5000', debug=True)
 
     
