@@ -7,13 +7,13 @@
 
 ## How to use API
 - Food Recomender
-  - http://host:port/food_recommender/predict
+  - /food_recommender/predict
   - Content-Type: "application/json"
   - Body: {"food_name": "food_name","when": "1, 2, 3, 4"}
   - 1 for Breakfast, 2 for Lunch, 3 for dinner, 4 for snack
  
 - Smart Chatbot
-  - http://host:port/smart_chatbot/predict
+  - /smart_chatbot/predict
   - Content-Type: "application/json"
   - Body: {"chat_content": "chat_content"}
  
